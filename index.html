@@ -89,7 +89,7 @@
             flex: 1;
         }
 
-        .sidebar-nav button, .sidebar-nav a {
+        .sidebar-nav button {
             background: transparent;
             border: none;
             color: #ebdcc5;
@@ -101,27 +101,11 @@
             font-weight: 500;
             transition: all 0.2s;
             width: 100%;
-            text-decoration: none;
         }
 
         .sidebar-nav button:hover, .sidebar-nav button.activo {
             background-color: #ebdcc5;
             color: #4a3319;
-        }
-
-        .sidebar-footer {
-            margin-top: 15px;
-        }
-
-        .btn-volver-tienda {
-            display: block;
-            text-align: center;
-            background: #ebdcc5;
-            color: #4a3319;
-            padding: 10px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
         }
 
         .contenido-admin {
@@ -168,6 +152,31 @@
             width: 100%;
         }
 
+        /* Botón flotante unificado para ir a la tienda (Visible en PC y Celular) */
+        .btn-ir-tienda-flotante {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #e67e22;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            z-index: 99999;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-ir-tienda-flotante:hover {
+            background: #d35400;
+            transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
             .btn-hamburguesa {
                 display: block;
@@ -209,10 +218,6 @@
                 <button onclick="mostrarModulo('seccion-balance', this); toggleMenuMovil();">📊 Balance y Gráficas</button>
                 <button onclick="mostrarModulo('seccion-notas', this); toggleMenuMovil();">📝 Notas del Panadero</button>
             </nav>
-
-            <div class="sidebar-footer">
-                <a href="index.html" class="btn-volver-tienda">← Volver a la Tienda</a>
-            </div>
         </aside>
 
         <main class="contenido-admin">
@@ -302,7 +307,6 @@
             <div id="seccion-balance" class="caja-modulo">
                 <h3>📊 Balance General de Caja</h3>
                 
-                <!-- Desglose de Ventas (Online vs Mostrador) -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
                     <div style="background: #fdfbf7; padding: 12px; border-radius: 8px; border: 1px solid #ebdcc5; text-align: center;">
                         <span style="font-size: 0.75rem; color: #7f8c8d; font-weight: bold; display: block;">VENTAS ONLINE</span>
@@ -347,8 +351,20 @@
         </main>
     </div>
 
-    <!-- Script de control móvil para el menú lateral -->
+    <!-- BOTÓN FLOTANTE UNIFICADO PARA IR A LA TIENDA -->
+    <a href="tienda.html" class="btn-ir-tienda-flotante" title="Ver Tienda Online">
+        🛒 Ver Tienda Online
+    </a>
+
+    <!-- Scripts de control móvil y menú -->
     <script>
+        function toggleMenu() {
+            const menu = document.getElementById("menu-lateral");
+            const overlay = document.getElementById("overlay");
+            menu.classList.toggle("activo");
+            overlay.classList.toggle("activo");
+        }
+
         function toggleMenuMovil() {
             if (window.innerWidth <= 768) {
                 toggleMenu();
