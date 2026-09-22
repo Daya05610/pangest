@@ -23,10 +23,10 @@ let carrito = [];
 let productosGlobales = [];
 
 const productosDefecto = [
-    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "images/donas.webp" },
-    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "images/pan-de-bono-fresco.jpg" },
-    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "images/torta-de-chocolate.webp" },
-    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "images/cafe-con-leche.webp" },
+    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "/images/donas.webp" },
+    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "/images/pan-de-bono-fresco.jpg" },
+    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "/images/torta-de-chocolate.webp" },
+    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "/images/cafe-con-leche.webp" },
 ];
 
 // ==========================================
@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let modoRegistro = false;
 
+    // Aseguramos que Firebase verifique el estado sin bloquear la interfaz
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (pantallaAuth) pantallaAuth.style.display = "none";
@@ -151,44 +152,47 @@ document.addEventListener("DOMContentLoaded", () => {
         authLinkToggle.addEventListener("click", (e) => {
             e.preventDefault();
             modoRegistro = !modoRegistro;
-            authTitulo.textContent = modoRegistro ? "Registro" : "Iniciar Sesión";
-            authMensajeToggle.textContent = modoRegistro ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?";
-            authLinkToggle.textContent = modoRegistro ? "Inicia sesión" : "Regístrate";
+            if (authTitulo) authTitulo.textContent = modoRegistro ? "Registro" : "Iniciar Sesión";
+            if (authMensajeToggle) authMensajeToggle.textContent = modoRegistro ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?";
+            if (authLinkToggle) authLinkToggle.textContent = modoRegistro ? "Inicia sesión" : "Regístrate";
             if (divNombre) divNombre.style.display = modoRegistro ? "block" : "none";
         });
     }
 
     if (formAuth) {
-        formAuth.addEventListener("submit", (e) => {
+        // Usamos addEventListener limpio y evitamos doble envío
+        formAuth.onsubmit = function(e) {
             e.preventDefault();
+            
             const nombreInput = document.getElementById("auth-nom-bre") || document.getElementById("auth-nombre");
             const nombre = nombreInput ? nombreInput.value.trim() : "";
-            const correo = document.getElementById("auth-usuario").value.trim();
-            const contrasena = document.getElementById("auth-password").value;
+            const correoInput = document.getElementById("auth-usuario");
+            const passwordInput = document.getElementById("auth-password");
+
+            if (!correoInput || !passwordInput) return;
+            const correo = correoInput.value.trim();
+            const contrasena = passwordInput.value;
 
             if (modoRegistro) {
                 auth.createUserWithEmailAndPassword(correo, contrasena)
-                    .then((userCredential) => userCredential.user.updateProfile({ displayName: nombre }))
-                    .then(() => alert("¡Bienvenido/a " + nombre + "! Registro exitoso."))
+                    .then((userCredential) => {
+                        return userCredential.user.updateProfile({ displayName: nombre });
+                    })
+                    .then(() => {
+                        alert("¡Bienvenido/a " + nombre + "! Registro exitoso.");
+                        if (pantallaAuth) pantallaAuth.style.display = "none";
+                    })
                     .catch((err) => alert("Error al registrar: " + err.message));
             } else {
                 auth.signInWithEmailAndPassword(correo, contrasena)
-                    .then(() => alert("¡Bienvenido/a de vuelta! 🍞"))
-                    .catch((err) => alert("Error: " + err.message));
+                    .then(() => {
+                        alert("¡Bienvenido/a de vuelta! 🍞");
+                        if (pantallaAuth) pantallaAuth.style.display = "none";
+                    })
+                    .catch((err) => alert("Error al iniciar sesión: " + err.message));
             }
-        });
+        };
     }
-
-    const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
-    if (btnCerrarSesion) {
-        btnCerrarSesion.addEventListener("click", () => {
-            auth.signOut().then(() => {
-                alert("Has cerrado sesión exitosamente.");
-            }).catch((error) => {
-                console.error("Error al cerrar sesión: ", error);
-            });
-        });
-    } 
 
     // --- C. CATÁLOGO INICIAL (Sincronizado con Admin usando 'panGestProductos') ---
     const guardados = localStorage.getItem("panGestProductos");

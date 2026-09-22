@@ -88,7 +88,7 @@ function agregarNuevoProducto() {
     }
 
     if (!imagen) {
-        imagen = "images/defecto.jpg";
+        imagen = "images/defecto.webp";
     }
 
     const nuevoProd = { nombre, precio, categoria, imagen };
@@ -129,7 +129,7 @@ function renderizarProductosAdmin() {
         html += `
             <div style="display: flex; justify-content: space-between; align-items: center; background: #fdfbf7; padding: 8px 12px; border: 1px solid #ebdcc5; border-radius: 6px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <img src="${prod.imagen}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: cover;" onerror="this.src='images/defecto.jpg'">
+                    <img src="${prod.imagen}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: cover;" onerror="this.src='images/defecto.webp'">
                     <div>
                         <strong style="font-size: 0.9rem; color: #4a3319;">${prod.nombre}</strong>
                         <span style="font-size: 0.8rem; color: #7f8c8d; display: block;">${prod.categoria} - $${prod.precio.toLocaleString('es-CO')}</span>
