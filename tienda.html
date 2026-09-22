@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANGEST - Aplicación Web de Gestión Panadera</title>
+
+    <!-- ESTILOS Y LIBRERÍAS DE FIREBASE -->
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <style>
+        /* ESTILOS GLOBALES PARA EVITAR DESBORDAMIENTOS */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #fcf8f2;
+            overflow-x: hidden;
+        }
+
+        /* Estilos para el control de pantallas */
+        .seccion-app {
+            display: none !important; 
+            width: 100%;
+        }
+        .seccion-app.activa {
+            display: block !important; 
+        }
+        .tarjeta-producto.oculto {
+            display: none !important;
+        }
+        
+        /* Barra de navegación inferior móvil */
+        .nav-inferior {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #ebdcc5;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none; 
+            color: #7f8c8d; 
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 5px;
+            position: relative;
+            width: 33%;
+        }
+        
+        .nav-item.activo {
+            color: #4a3319;
+            font-weight: bold;
+        }
+
+        .nav-item span {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        /* Globo indicador de cantidad (Badge) */
+        .badge-carrito {
+            position: absolute;
+            top: -2px;
+            right: 22px;
+            background: #e67e22;
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA COMPLETA DE AUTENTICACIÓN -->
+    <div id="pantalla-auth" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #fcf8f2; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div style="max-width: 380px; width: 100%; background: #ffffff; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #ebdcc5; text-align: center;">
+            <h2 id="auth-titulo" style="margin: 0 0 25px 0; color: #4a3319; font-size: 1.8rem;">Iniciar Sesión</h2>
+
+            <form id="form-autenticacion" style="display: flex; flex-direction: column; gap: 15px;">
+                <div id="div-nombre" style="display: none;">
+                    <input type="text" id="auth-nom-bre" placeholder="Nombre completo" style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
+                </div>
+
+                <input type="email" id="auth-usuario" placeholder="Correo electrónico" required style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
+                <input type="password" id="auth-password" placeholder="Contraseña (mínimo 6 caracteres)" required style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
+                
+                <button type="submit" id="auth-boton" style="width: 100%; background: #4a3319; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px;">
+                    Enviar
+                </button>
+            </form>
+
+            <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
+                <span id="auth-mensaje-toggle">¿No tienes cuenta?</span> 
+                <a href="#" id="auth-link-toggle" style="color: #8c5a2b; font-weight: bold; text-decoration: none;">Regístrate</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL / INICIO -->
+    <div id="pantalla-inicio" class="seccion-app activa" style="padding-bottom: 90px; width: 100%;">
+        
+        <!-- BARRA DE BÚSQUEDA CON BOTÓN DE CÁMARA Y LUPA -->
+        <div class="contenedor-buscador" style="position: relative; width: 90%; max-width: 500px; margin: 15px auto 10px auto;">
+            <input 
+                type="text" 
+                id="input-busqueda" 
+                placeholder="Buscar pan, torta, bebida..." 
+                style="width: 100%; padding: 12px 90px 12px 18px; font-size: 0.95rem; border: 1px solid #ebdcc5; border-radius: 25px; outline: none; background-color: #ffffff; color: #4a3319; box-shadow: 0 2px 5px rgba(0,0,0,0.03);"
+            >
+            
+            <div style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 8px; pointer-events: none;">
+                <button id="btn-buscar-camara" type="button" title="Abrir cámara o subir archivo" style="pointer-events: auto; background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #7f8c8d;">
+                    📷
+                </button>
+                <button id="btn-buscar-lupa" type="button" title="Buscar" style="pointer-events: auto; background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #4a3319;">
+                    🔍
+                </button>
+            </div>
+        </div>
+
+        <header style="text-align: center; padding: 10px 10px 20px 10px; background: #fff; border-bottom: 1px solid #ebdcc5; width: 100%;">
+            <h1 style="margin: 0; color: #4a3319; font-size: 1.8rem; font-weight: 800;">PANGEST</h1>
+            <p style="margin: 5px 0 0 0; color: #4a3319; font-size: 0.9rem;">Aplicación Web de Gestión Panadera</p>
+        </header>
+
+       <div class="categorias-contenedor" style="margin: 20px auto; display: flex; justify-content: flex-start; align-items: center; gap: 8px; overflow-x: auto; padding: 0 15px; width: 90%; max-width: 500px; box-sizing: border-box; -webkit-overflow-scrolling: touch;">
+            <button class="btn-categoria active" style="flex-shrink: 0;">Todos</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Panes dulces</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Panes salados</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Reposteria</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Bebidas</button>
+        </div>
+
+        <main class="estante-contenedor" style="padding: 0 15px; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; width: 100%;">
+            <!-- JavaScript dibujará los productos dinámicamente aquí -->
+        </main>
+    </div>
+
+    <!-- MODAL DE CÁMARA / SUBIR ARCHIVO EN VIVO -->
+    <div id="modal-camara" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: #ffffff; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <h3 style="margin-top: 0; color: #4a3319;">Escanear / Subir Imagen</h3>
+            
+            <div style="position: relative; width: 100%; height: 260px; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+                <video id="video-camara" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                <canvas id="canvas-camara" style="display: none;"></canvas>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-capturar-foto" style="background: #27ae60; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
+                    📸 Tomar Foto
+                </button>
+                
+                <label style="background: #ebdcc5; color: #4a3319; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; display: block;">
+                    📁 O seleccionar de archivos
+                    <input type="file" id="input-archivo-galeria" accept="image/*" style="display: none;">
+                </label>
+
+                <button id="btn-cerrar-modal-camara" style="background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px;">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA CARRITO -->
+    <div id="pantalla-carrito" class="seccion-app" style="padding-bottom: 90px; min-height: 100vh; display: flex; flex-direction: column; background: #fff8f0; width: 100%;">
+        <div style="padding: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ebdcc5; background: #ffffff;">
+            <span style="font-size: 1.4rem;">🛒</span>
+            <div>
+                <h3 style="margin: 0; font-size: 1.2rem; color: #4a3319; font-weight: 700;">Tu Pedido</h3>
+                <p style="margin: 2px 0 0 0; font-size: 0.85rem; color: #7f8c8d;">Productos seleccionados</p>
+            </div>
+        </div>
+
+        <div style="flex: 1; padding: 15px; width: 100%;">
+            <ul id="elementos-carrito" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                <li class="carrito-vacio" style="text-align: center; color: #95a5a6; font-size: 1rem; padding: 40px 0;">
+                    El carrito está vacío
+                </li>
+            </ul>
+        </div>
+
+        <div style="background: #ffffff; border-top: 1px solid #ebdcc5; padding: 20px; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1rem; color: #4a3319; font-weight: bold;">Total a Pagar:</span>
+                <span id="precio-total" style="font-size: 1.5rem; color: #27ae60; font-weight: 800;">$0</span>
+            </div>
+            
+            <button id="btn-pagar" style="width: 100%; background: #4a3319; color: #ffffff; border: none; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(74, 51, 25, 0.15);">
+                Confirmar Compra ➔
+            </button>
+        </div>
+    </div>
+
+    <!-- PANTALLA PERFIL / HISTORIAL -->
+    <div id="pantalla-perfil" class="seccion-app" style="padding-bottom: 90px; width: 100%;">
+        <div style="text-align: center; padding: 20px 15px 10px 15px; background-color: #ffffff; border-bottom: 1px solid #ebdcc5; width: 100%;">
+            <div style="margin-bottom: 8px;">
+                <img id="perfil-foto" src="https://ui-avatars.com/api/?name=Cliente&background=ebdcc5&color=4a3319" alt="Foto de perfil" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ebdcc5;">
+            </div>
+            <h3 id="nombre-cliente-perfil" style="margin: 0; font-size: 1.2rem; color: #4a3319; font-weight: 700;">Cliente PanGest</h3>
+            <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #7f8c8d;">Mi Perfil y Pedidos Realizados</p>
+        </div>
+
+        <div style="padding: 15px; width: 100%;">
+            <h4 style="margin: 10px 0 15px 0; color: #4a3319; font-size: 1.1rem; text-align: center;">📜 Mis Compras Recientes</h4>
+            <div id="contenedor-historial" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+    <nav class="nav-inferior">
+        <button class="nav-item activo" id="btn-nav-inicio">
+            <span>🏠</span>
+            Inicio
+        </button>
+        <button class="nav-item" id="btn-nav-perfil">
+            <span>👤</span>
+            Tú
+        </button>
+        <button class="nav-item" id="btn-nav-carrito">
+            <span>🛒</span>
+            <div id="badge-contador" class="badge-carrito">0</div>
+            Carrito
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
