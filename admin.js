@@ -99,7 +99,7 @@ function agregarNuevoProducto() {
     renderizarBotonesVentaLocal();
 
     document.getElementById("form-nuevo-producto").reset();
-    alert("📦 ¡Producto agregado con éxito!");
+    alert("📦 ¡Producto agregado con éxito y sincronizado con la tienda!");
 }
 
 function eliminarProducto(index) {
@@ -478,6 +478,8 @@ function mostrarReciboVentaLocal(venta) {
     ventanaImpresion.document.close();
 }
 
+// ==========================================
+// ==========================================
 // 6. BALANCE GENERAL Y GRÁFICAS
 // ==========================================
 function actualizarBalanceGeneral() {
@@ -487,7 +489,6 @@ function actualizarBalanceGeneral() {
 
     let totalGastos = gastosMateriaPrima.reduce((sum, g) => sum + (g.valor || 0), 0);
 
-    // Actualizar textos en pantalla
     const elWeb = document.getElementById("admin-total-web");
     const elLocal = document.getElementById("admin-total-local");
     const elCombinado = document.getElementById("admin-total-combinado");

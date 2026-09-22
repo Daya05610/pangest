@@ -6,38 +6,56 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* CORRECCIÓN DE DESBORDAMIENTO EN MÓVILES */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
 /* FONDO DE LA APP (Color Crema Cálido) */
 body {
     background-color: #e49d11;
     color: #4a3319; /* Café oscuro para las letras */
-    padding: 20px;
+    padding: 10px; /* Reducido para evitar que se desborde en celulares */
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+/* Asegurar que todos los contenedores respeten el ancho de la pantalla */
+div, section, header, nav, main, footer {
+    max-width: 100%;
 }
 
 /* ENCABEZADO */
 header {
     text-align: center;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: #36220f;
     letter-spacing: 2px;
 }
 
 header p {
     color: #8c6239;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 /* BOTONES DE CATEGORÍAS */
 .categorias {
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
 .btn-categoria {
@@ -51,20 +69,20 @@ header p {
     transition: all 0.3s ease;
 }
 
-.btn-categoria.active, .btn-categoria:hover {
+.btn-categoria.active,.btn-categoria:hover {
     background-color: #8c6239;
     color: #fff;
+    transition: all 0.3s ease;
 }
 
 /* CONTENEDOR DEL ESTANTE */
 .estante-contenedor {
     width: 100%;
-    max-width: 1200px; /* Ahora es más ancho para albergar varios productos */
+    max-width: 1200px;
     display: grid;
-    /* Esto crea columnas automáticas que se acomodan solas según el tamaño de la pantalla */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 25px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+    gap: 20px;
+    padding: 10px;
 }
 
 /* LA TARJETA DEL PAN */
@@ -74,32 +92,35 @@ header p {
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1e6d8;
+    width: 100%;
 }
 
-/* CONTROL DE LA FOTO (¡Esto arreglará el problema del tamaño!) */
+/* CONTROL DE LA FOTO */
 .tarjeta-producto img {
     width: 100%;
-    height: 250px;
-    object-fit: cover; /* Hace que la foto se adapte sin deformarse */
+    max-width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
 }
 
 /* INFORMACIÓN DEL PRODUCTO */
 .info-producto {
-    padding: 20px;
+    padding: 15px;
     text-align: center;
 }
 
 .info-producto h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #36220f;
     margin-bottom: 8px;
 }
 
 .info-producto .precio {
-    font-size: 1.2rem;
-    color: #e67e22; /* Color naranja/miel para resaltar el precio */
+    font-size: 1.1rem;
+    color: #e67e22;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 /* BOTÓN AÑADIR */
@@ -120,52 +141,52 @@ header p {
     background-color: #5c3f23;
 }
 
-
 /* DISEÑO DEL CARRITO */
 .carrito-contenedor {
     background-color: #ffffff;
     border-radius: 15px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1e6d8;
     width: 100%;
     max-width: 400px;
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 .carrito-contenedor h2 {
     color: #36220f;
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
     border-bottom: 2px solid #f1e6d8;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 #elementos-carrito {
     list-style: none;
-    margin-bottom: 20px;
-    min-height: 60px;
+    margin-bottom: 15px;
+    min-height: 50px;
 }
 
 .carrito-vacio {
     color: #a08060;
     font-style: italic;
     text-align: center;
-    padding: 20px 0;
+    padding: 15px 0;
 }
 
 .total-carrito {
     border-top: 2px solid #f1e6d8;
-    padding-top: 15px;
+    padding-top: 12px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .total-carrito h3 {
     display: flex;
     justify-content: space-between;
     color: #36220f;
+    font-size: 1.1rem;
 }
 
 .total-carrito span {
@@ -175,7 +196,7 @@ header p {
 .btn-pagar {
     width: 100%;
     padding: 12px;
-    background-color: #27ae60; /* Verde para dar sensación de éxito/pago */
+    background-color: #27ae60;
     color: white;
     border: none;
     border-radius: 8px;
@@ -195,146 +216,111 @@ header p {
     justify-content: space-between !important;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px dashed #f1e6d8; /* Una línea punteada tipo recibo */
-    font-size: 1rem;
+    border-bottom: 1px dashed #f1e6d8;
+    font-size: 0.95rem;
     color: #4a3319;
 }
 
 #elementos-carrito li strong {
-    color: #e67e22; /* El precio en color miel/naranja */
+    color: #e67e22;
 }
-
 
 /* CONTROL DEL DASHBOARD ADMINISTRATIVO */
 .admin-dashboard {
     width: 100%;
-    max-width: 450px; /* Simula las proporciones de una pantalla móvil ejecutiva */
+    max-width: 450px;
     background-color: #ffffff;
     border-radius: 20px;
-    padding: 25px;
-    margin-top: 50px;
+    padding: 20px;
+    margin-top: 30px;
     box-shadow: 0 10px 30px rgba(74, 51, 25, 0.1);
     border: 1px solid #f1e6d8;
 }
 
 .admin-header {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .admin-header h2 {
     color: #1a0f05;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
 }
 
 .admin-header p {
     color: #7f8c8d;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* CONTENEDOR DE TARJETAS CONTABLES */
 .tarjetas-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 8px;
+    margin-bottom: 25px;
 }
 
 .tarjeta-finanzas {
     background-color: #fcfbfa;
-    border-radius: 12px;
-    padding: 12px 8px;
+    border-radius: 10px;
+    padding: 10px 6px;
     text-align: center;
     border: 1px solid #f5ede3;
 }
 
 .tarjeta-finanzas h4 {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: #7f8c8d;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
 }
 
 .tarjeta-finanzas p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
-/* Colores específicos de la analítica del diseño de referencia */
-.ventas p { color: #2980b9; }    /* Azul ejecutivo para ingresos */
-.gastos p { color: #c0392b; }    /* Rojo suave para egresos */
-.utilidad p { color: #27ae60; }  /* Verde para ganancias reales */
+.ventas p { color: #2980b9; }
+.gastos p { color: #c0392b; }
+.utilidad p { color: #27ae60; }
 
-.subtexto-positivo { font-size: 0.6rem; color: #27ae60; font-weight: bold; }
-.subtexto-negativo { font-size: 0.6rem; color: #7f8c8d; }
+.subtexto-positivo { font-size: 0.55rem; color: #27ae60; font-weight: bold; }
+.subtexto-negativo { font-size: 0.55rem; color: #7f8c8d; }
 
 /* REJILLA DE LOS BOTONES / MÓDULOS */
 .modulos-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 12px;
 }
 
 .modulo-item {
     background-color: #ffffff;
     border: 1px solid #f0e4d4;
-    border-radius: 15px;
-    padding: 15px 10px;
+    border-radius: 12px;
+    padding: 12px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .modulo-item:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(140, 98, 57, 0.15);
     background-color: #fdfbf7;
 }
 
 .modulo-item span {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #4a3319;
+    text-align: center;
 }
 
 .icono-modulo {
-    font-size: 1.6rem !important;
-}
-
-/* asegurar que las imagenes no rompan el ancho de la pantalla */
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        /* evitar debordamientos en contenedores principales */
-        body, html {
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
-        }
-/* --- CORRECCIÓN DE DESBORDAMIENTO EN MÓVILES --- */
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    max-width: 100%;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-}
-
-/* Forzar que contenedores, tarjetas e imágenes respeten el ancho de la pantalla */
-div, section, header, nav, main, footer {
-    max-width: 100%;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
+    font-size: 1.4rem !important;
 }
