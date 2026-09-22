@@ -75,6 +75,20 @@
             font-weight: bold;
             display: none;
         }
+        
+        /* asegurar que las imagenes no rompan el ancho de la pantalla */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        /* evitar debordamientos en contenedores principales */
+        body, html {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+
     </style>
 </head>
 <body style="margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; background-color: #fcf8f2;">
