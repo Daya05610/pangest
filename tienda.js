@@ -194,10 +194,27 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // --- C. CATÁLOGO INICIAL (Sincronizado con Admin usando 'panGestProductos') ---
+  // --- C. CATÁLOGO INICIAL ---
+    const productosDefecto = [
+        { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "images/donas.webp" },
+        { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "images/pan-de-bono-fresco.jpg" },
+        { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "images/torta-de-chocolate.webp" },
+        { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "images/cafe-con-leche.webp" }
+    ];
+
+    // Verificamos si ya existe algo en localStorage; si no, inicializamos con los por defecto
     const guardados = localStorage.getItem("panGestProductos");
     if (guardados) {
-        productosGlobales = JSON.parse(guardados);
+        try {
+            productosGlobales = JSON.parse(guardados);
+            if (!Array.isArray(productosGlobales) || productosGlobales.length === 0) {
+                productosGlobales = productosDefecto;
+                localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
+            }
+        } catch (e) {
+            productosGlobales = productosDefecto;
+            localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
+        }
     } else {
         productosGlobales = productosDefecto;
         localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
@@ -206,9 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dibujarTienda("Todos");
     dibujarHistorialComprasCliente();
 
-    const btnPagar = document.getElementById("btn-pagar");
-    if (btnPagar) btnPagar.addEventListener("click", confirmarCompra);
-
+    
     // Filtros por botón de categoría
     const botonesCategorias = document.querySelectorAll(".btn-categoria");
     botonesCategorias.forEach((boton) => {
