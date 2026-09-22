@@ -304,3 +304,37 @@ header p {
 .icono-modulo {
     font-size: 1.6rem !important;
 }
+
+/* asegurar que las imagenes no rompan el ancho de la pantalla */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        /* evitar debordamientos en contenedores principales */
+        body, html {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+/* --- CORRECCIÓN DE DESBORDAMIENTO EN MÓVILES --- */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* Forzar que contenedores, tarjetas e imágenes respeten el ancho de la pantalla */
+div, section, header, nav, main, footer {
+    max-width: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
