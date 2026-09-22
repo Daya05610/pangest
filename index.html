@@ -100,7 +100,7 @@
 
             <form id="form-autenticacion" style="display: flex; flex-direction: column; gap: 15px;">
                 <div id="div-nombre" style="display: none;">
-                    <input type="text" id="auth-nombre" placeholder="Nombre completo" style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
+                    <input type="text" id="auth-nom-bre" placeholder="Nombre completo" style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
                 </div>
 
                 <input type="email" id="auth-usuario" placeholder="Correo electrónico" required style="width: 100%; padding: 12px 15px; border: 1px solid #ebdcc5; border-radius: 8px; background: #fdfbf7; font-size: 0.95rem; outline: none;">
@@ -145,15 +145,15 @@
             <p style="margin: 5px 0 0 0; color: #4a3319; font-size: 0.9rem;">Aplicación Web de Gestión Panadera</p>
         </header>
 
-     <div class="categorias-contenedor" style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 15px; width: 100%; -webkit-overflow-scrolling: touch; justify-content: flex-start;">
-            <button class="btn-categoria active">Todos</button>
-            <button class="btn-categoria">Panes dulces</button>
-            <button class="btn-categoria">Panes salados</button>
-            <button class="btn-categoria">Reposteria</button>
-            <button class="btn-categoria">Bebidas</button>
+       <div class="categorias-contenedor" style="margin: 20px auto; display: flex; justify-content: flex-start; align-items: center; gap: 8px; overflow-x: auto; padding: 0 15px; width: 90%; max-width: 500px; box-sizing: border-box; -webkit-overflow-scrolling: touch;">
+            <button class="btn-categoria active" style="flex-shrink: 0;">Todos</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Panes dulces</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Panes salados</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Reposteria</button>
+            <button class="btn-categoria" style="flex-shrink: 0;">Bebidas</button>
         </div>
 
-        <main class="estante-contenedor" style="padding: 0 15px; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <main class="estante-contenedor" style="padding: 0 15px; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; width: 100%;">
             <!-- JavaScript dibujará los productos dinámicamente aquí -->
         </main>
     </div>
