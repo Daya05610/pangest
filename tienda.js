@@ -23,10 +23,10 @@ let carrito = [];
 let productosGlobales = [];
 
 const productosDefecto = [
-    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "/images/donas.webp" },
-    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "/images/pan-de-bono-fresco.jpg" },
-    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "/images/torta-de-chocolate.webp" },
-    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "/images/cafe-con-leche.webp" },
+    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "images/donas.webp" },
+    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "images/pan-de-bono-fresco.jpg" },
+    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "images/torta-de-chocolate.webp" },
+    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "images/cafe-con-leche.webp" }
 ];
 
 // ==========================================
@@ -131,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let modoRegistro = false;
 
-    // Aseguramos que Firebase verifique el estado sin bloquear la interfaz
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (pantallaAuth) pantallaAuth.style.display = "none";
@@ -160,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (formAuth) {
-        // Usamos addEventListener limpio y evitamos doble envío
         formAuth.onsubmit = function(e) {
             e.preventDefault();
             
@@ -194,36 +192,30 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-  // --- C. CATÁLOGO INICIAL ---
-    const productosDefecto = [
-        { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "images/donas.webp" },
-        { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "images/pan-de-bono-fresco.jpg" },
-        { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "images/torta-de-chocolate.webp" },
-        { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "images/cafe-con-leche.webp" }
-    ];
-
-    // Verificamos si ya existe algo en localStorage; si no, inicializamos con los por defecto
+    // --- C. CATÁLOGO INICIAL INTELIGENTE ---
     const guardados = localStorage.getItem("panGestProductos");
+    
     if (guardados) {
         try {
-            productosGlobales = JSON.parse(guardados);
-            if (!Array.isArray(productosGlobales) || productosGlobales.length === 0) {
+            const parsed = JSON.parse(guardados);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                productosGlobales = parsed;
+            } else {
                 productosGlobales = productosDefecto;
-                localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
+                localStorage.setItem("panGestProductos", JSON.stringify(productosDefecto));
             }
-        } catch (e) {
+        } catch (err) {
             productosGlobales = productosDefecto;
-            localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
+            localStorage.setItem("panGestProductos", JSON.stringify(productosDefecto));
         }
     } else {
         productosGlobales = productosDefecto;
-        localStorage.setItem("panGestProductos", JSON.stringify(productosGlobales));
+        localStorage.setItem("panGestProductos", JSON.stringify(productosDefecto));
     }
 
     dibujarTienda("Todos");
     dibujarHistorialComprasCliente();
 
-    
     // Filtros por botón de categoría
     const botonesCategorias = document.querySelectorAll(".btn-categoria");
     botonesCategorias.forEach((boton) => {
@@ -259,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Escucha cambios en tiempo real desde el panel de administración
     window.addEventListener("storage", (e) => {
         if (e.key === "panGestProductos") {
-            productosGlobales = JSON.parse(e.newValue) || [];
+            productosGlobales = JSON.parse(e.newValue) || productosDefecto;
             const botonActivo = document.querySelector(".btn-categoria.active");
             dibujarTienda(botonActivo ? botonActivo.textContent.trim() : "Todos");
         }
@@ -423,12 +415,10 @@ function confirmarCompra() {
         }
     };
 
-    // Guardar en la lista de ventas web que lee el admin (`panGestVentasWeb`)
     let ventasWebAdmin = JSON.parse(localStorage.getItem("panGestVentasWeb")) || [];
     ventasWebAdmin.unshift(nuevaVentaWeb);
     localStorage.setItem("panGestVentasWeb", JSON.stringify(ventasWebAdmin));
 
-    // Guardar historial para el perfil del cliente
     const facturaCliente = {
         productos: resumenProductos.map(p => `${p.cantidad}x ${p.nombre}`).join(", "),
         total: totalCompra,
