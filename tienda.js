@@ -23,10 +23,10 @@ let carrito = [];
 let productosGlobales = [];
 
 const productosDefecto = [
-    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "images/donas.webp" },
-    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "images/pan-de-bono-fresco.jpg" },
-    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "images/torta-de-chocolate.webp" },
-    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "images/cafe-con-leche.webp" },
+    { nombre: "Donas", precio: 1000, categoria: "Panes dulces", imagen: "/images/donas.webp" },
+    { nombre: "Pan de bono fresco", precio: 1500, categoria: "Panes salados", imagen: "/images/pan-de-bono-fresco.jpg" },
+    { nombre: "Torta de Chocolate", precio: 4500, categoria: "Reposteria", imagen: "/images/torta-de-chocolate.webp" },
+    { nombre: "Café con Leche", precio: 2000, categoria: "Bebidas", imagen: "/images/cafe-con-leche.webp" },
 ];
 
 // ==========================================
